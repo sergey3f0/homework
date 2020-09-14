@@ -1,5 +1,7 @@
 let txt = "vim.txt";;
 let line = ref "";;
+open List;;
+exception Foo;;
 
 let ic = open_in txt in
 try 
@@ -8,19 +10,18 @@ try
 	done;
 with End_of_file -> 
 	close_in ic;;
-let words = ref (String.split_on_char ' ' !line);;
+let words =List.fast_sort (fun a b -> if a<b then 1 else if a=b then 0 else -1) (String.split_on_char ' ' !line);;
 
-let list = ref [] ;;
-while !words <> [] do 
-match !words with
-[] -> ()
-|hd::tl -> let l = List.partition ((=) hd) !words in 
-list:=!list@[(fst l)]; 
-words:=(snd l);
-done;;
+let find l a =
+try
+	for i = 0 to ((length l)-1) do
+	if (nth l i)=a then raise Foo
+	done;
+with Foo ->
+i;;
 
-list:=List.fast_sort (fun a b -> if (List.length a) > (List.length b) then -1 else if (List.length a)<(List.length b) then 1 else 0) !list;;
-for i = 0 to 10 do
-print_string ((List.nth (List.nth !list i) 0)^(string_of_int(List.length (List.nth !list i)))^"\n")
-done;;
-print_newline();;
+let l = ref [] in
+let rec mkuniq l =
+match l with
+[] -> 
+|a::b -> if (length a) = (i-2) then 
