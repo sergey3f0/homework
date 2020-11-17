@@ -1,6 +1,6 @@
 type 'a tree = Leaf | Node of ('a tree)*('a tree)*int;;
 
-let t = Node (Node(Node(Leaf,Leaf,3),Node(Leaf,Leaf,7),5),Node(Leaf,Leaf,20),10);;
+let t = Node (Node(Node(Leaf,Leaf,3),Node(Leaf,Leaf,7),5),Leaf,max_int);;
 
 let rec string_of_tree t = 
 match t with
@@ -32,6 +32,24 @@ match t with
 Leaf -> Leaf
 |Node (x,y,z) -> if a=z then(if not(x=Leaf&&y=Leaf) then Node(x,del y (minTree y),minTree y) else Leaf)else if a<z then Node(del x a,y,z) else Node(x,del y a,z);;
 
+let verify t =
+  let res = ref true in
+  let rec verif t mx mn =
+    match t with
+    Leaf -> ()
+    |Node(x,y,z) -> if ((z<mx||(z=max_int&&z=mx))&&z>=mn) then (
+      verif x z mn;
+      verif y mx z
+    )
+    else(
+      res:=false
+    ) in
+
+  verif t max_int min_int;
+  !res
+;;
+
+(*print_string (if (verify t) then "True" else "False");;*)
 (*print_string (if (mem t 1) then "True" else "False");;*)
 (*print_string (string_of_tree(add t 21);;*)
 (*print_string(string_of_tree t);;*)
