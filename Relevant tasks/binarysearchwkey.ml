@@ -1,4 +1,3 @@
-open Array;;
 type 'a tree = Leaf | Node of 'a tree*'a tree*('a*'a);;
 
 let t = Node (Node(Node(Leaf,Leaf,(3,1)),Leaf,(5,2)),Node(Node(Leaf,Leaf,(15,3)),Node(Leaf,Leaf,(25,4)),(20,5)),(10,6));;
