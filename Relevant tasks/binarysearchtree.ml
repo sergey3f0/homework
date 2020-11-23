@@ -1,11 +1,11 @@
-type 'a tree = Leaf | Node of ('a tree)*('a tree)*int;;
+type 'a tree = Leaf | Node of ('a tree)*('a tree)*'a;;
 
-let t = Node (Node(Node(Leaf,Leaf,3),Node(Leaf,Leaf,7),5),Leaf,max_int);;
+let t = Node (Node(Leaf,Leaf,false),Node(Leaf,Leaf,true),true);;
 
 let rec string_of_tree t = 
 match t with
 Leaf -> "Leaf"
-|Node (x,y,z) -> "Node ("^(string_of_tree x)^","^(string_of_tree y)^","^(string_of_int z)^")";;
+|Node (x,y,z) -> "Node ("^(string_of_tree x)^","^(string_of_tree y)^","^(string_of_bool z)^")";;
 
 let rec mem t a =
 match t with
@@ -17,14 +17,10 @@ match t with
 Leaf -> Node (Leaf,Leaf,a)
 |Node (x,y,z) -> if a<z then Node(add x a,y,z) else Node (x,add y a,z);;
 
-let minTree t =
-	let i = ref 0 in
-	let rec miTree q =
-		match q with
-		Leaf -> ()
-		|Node(x,y,z) -> if x <> Leaf then miTree x else i:=z in
-miTree t;
-!i;; 
+let rec minTree t =
+  match t with
+     Leaf -> raise (Invalid_argument "Empty tree contains no minimal value")
+    |Node (x,y,z) -> if x <> Leaf then minTree x else z;;
 
 
 let rec del t a =
@@ -32,27 +28,23 @@ match t with
 Leaf -> Leaf
 |Node (x,y,z) -> if a=z then(if not(x=Leaf&&y=Leaf) then Node(x,del y (minTree y),minTree y) else Leaf)else if a<z then Node(del x a,y,z) else Node(x,del y a,z);;
 
-let verify t =
-  let res = ref true in
-  let rec verif t mx mn =
-    match t with
-    Leaf -> ()
-    |Node(x,y,z) -> if ((z<mx||(z=max_int&&z=mx))&&z>=mn) then (
-      verif x z mn;
-      verif y mx z
-    )
-    else(
-      res:=false
-    ) in
+open List;;
 
-  verif t max_int min_int;
-  !res
-;;
+let rec vallist t =
+  match t with
+    Leaf -> []
+    |Node(x,y,z) -> (vallist x)@[z]@(vallist y);;
 
-(*print_string (if (verify t) then "True" else "False");;*)
+ let rec verify t = 
+  match t with
+    Leaf -> true
+    |Node (x,y,z) -> if (for_all ((>) z) (vallist x))&& (for_all ((<=) z) (vallist y)) then (verify x)&&(verify y) else false;;
+
+
+(*print_string (string_of_bool (verify t));;*)
 (*print_string (if (mem t 1) then "True" else "False");;*)
 (*print_string (string_of_tree(add t 21);;*)
 (*print_string(string_of_tree t);;*)
-(*print_string(string_of_tree(del t 20));;*)
+(*print_string(string_of_tree(del t false));;*)
 
 print_newline();;
