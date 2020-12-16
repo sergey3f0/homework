@@ -1,3 +1,4 @@
+
 open List;;
 
 
@@ -22,9 +23,9 @@ let cuta =
 	if inin <= (snd webinfo) && inin >= 1 then inin else raise (Invalid_argument "Unable to cut web given way")
 ;;
 let cutlist = map int_of_string (String.split_on_char ' ' (read_line()));;
-(*ЧТЕНИЕ ВСЕЙ ХРЕНИ*)
+if (length cutlist) <> cuta then raise (Invalid_argument "Incorrect amount of cuts")
 
-let cut x =threadlist := filteri (fun a b ->if a<>(x-1) then true else false) !threadlist;;
+let cut x =threadlist := mapi (fun a b ->if a<>x then b else (0,0)) !threadlist;;
 
 let chunks l =
 	let out = ref 0 in
@@ -46,11 +47,11 @@ let chunks l =
 					connectionlist:=a::!connectionlist
 				else ()
 	done;
-	!out
+	!out-1
 ;;
 
 for i = 0 to cuta-1 do
-	cut (i+1);
+	cut ((nth cutlist i)-1);
 	print_int(chunks !threadlist);
 	print_char ' ';
 done;;
