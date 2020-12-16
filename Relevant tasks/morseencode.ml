@@ -40,4 +40,5 @@ let out = ref "" in
 	done;
 !out;;
 let o = lowercase_ascii (encode s);;
-print_string (sub o 3 ((length o)-3)) ;;
+let o = (sub o 3 ((length o)-3)) ;;
+print_string o;;
